@@ -1,28 +1,36 @@
 #define PSEUDO_LEN 10
 
-
-struct Type {
-    char type[4];
-};   
-
-struct Body {
-
-};
-
-struct Connexion {
-
-};
-
-struct Accept {
-
-};
-
-struct Fail {
-
-};
-
-struct Message {
+typedef struct Message {
     char message_len[4];
-    struct Type type;
-    struct Body body;
-};
+    char type[4];
+} Message;
+
+typedef struct Signin {
+    Message message;
+    char *pseudo;
+    char *tube;
+} Connection;
+
+typedef struct SResponse {
+    Message message;
+    char id[2];
+} SResponse;   
+
+typedef struct SResponse {
+    Message message;
+    char id[2];
+} SResponse;   
+
+typedef struct Logout {
+    Message message;
+    char id[2];
+} Logout;
+
+typedef struct UserChat {
+    Message message;
+    char id[2];
+    char *body;
+} UserChat;
+
+
+

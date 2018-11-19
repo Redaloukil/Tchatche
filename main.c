@@ -20,6 +20,6 @@ void main(){
     client.pseudo = "reda"; 
     
     printf("%d" , client.id);
-    printf("%c" , &((char) client.pseudo));
+    printf("%c" , ((char) client.pseudo));
     
 }
