@@ -5,7 +5,7 @@ typedef struct Message {
     char type[4];
 } Message;
 
-typedef struct Signin {
+typedef struct Connection {
     Message message;
     char *pseudo;
     char *tube;
