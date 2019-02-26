@@ -8,12 +8,24 @@
 #include <arpa/inet.h>
 
 
+ 
 #define MAX 80 //Buffer size 
 #define PORT 8080 //Server port 
 #define SA struct sockaddr //socket adresse used to communicated with client 
 
+void client_request(int choice){
+    switch(choice){
+        case 0 : 
+            printf("connecte to the server loading..");
+            connection_request();
+        case 1 : 
+            printf("quit the program..");
+            exit(0);
+    }
+}
+
 //CONNECTION REQUEST
-void connection_request(){
+void connection_request(int sockfd){
     
 }
 //LOGOUT REQUEST
@@ -33,8 +45,8 @@ void func(int sockfd)
         bzero(buff, sizeof(buff)); 
         printf("Enter the string : ");  
         n = 0; 
-        while ((buff[n++] = getchar()) != '\n') 
-            ; 
+        while ((buff[n++] = getchar()) != '\n');
+         
         write(sockfd, buff, sizeof(buff)); 
         bzero(buff, sizeof(buff)); 
         read(sockfd, buff, sizeof(buff)); 
@@ -45,6 +57,20 @@ void func(int sockfd)
         } 
     } 
 } 
+
+void menu(){
+    int run = 1;
+    int choice;
+    while(run == 1){
+        printf("##################################");
+        printf("Hello world,what you wish to do ?");
+        printf("1 - Connect to the server");
+        printf("2 - Connect to the server");
+        scanf("you choice %d" , &choice);
+        client_request(choice);
+    }
+}
+
   
 int main() 
 { 
@@ -59,6 +85,7 @@ int main()
     } 
     else
         printf("Socket successfully created.. \n"); 
+        
     bzero(&servaddr, sizeof(servaddr)); 
   
     // assign IP, PORT 
@@ -75,15 +102,9 @@ int main()
         printf("connected to the server..\n"); 
   
     // function for chat 
-    // func(sockfd); 
-    int start = 1;
     
-    while(start){
-        //1 LOGIN OR QUIT 
-        //2 GET THE USER ID
-        //START TCHATCHING
-        //END THE TCHAT
-    }
+    // func(sockfd); 
+    
   
     // close the socket 
     close(sockfd); 

@@ -14,18 +14,6 @@
 #define CLIENTS_NUM 20
 #define SA struct sockaddr 
 
-//ACCEPT CONNECTION FROM CLIENT 
-void accept_connection(){
-
-}
-//ACCEPT A MESSAGE AND BROADCAST
-void receive_message(){
-
-}  
-//ACCEPT LOGOUT
-void accept_logout(){
-
-}
 
 // Function designed for chat between client and server. 
 void func(int sockfd) 
@@ -34,7 +22,8 @@ void func(int sockfd)
     int n; 
     // infinite loop for chat 
     for (;;) { 
-        bzero(buff, MAX); 
+        //buffer initialized to zero 
+        bzero(buff, MAX);
         printf("%s", buff);
         // read the message from client and copy it in buffer 
         read(sockfd, buff, sizeof(buff)); 
@@ -60,6 +49,7 @@ void func(int sockfd)
 // Driver function 
 int main() 
 { 
+    int client_num;
     int sockfd, connfd, len; 
     struct sockaddr_in servaddr, cli; 
   

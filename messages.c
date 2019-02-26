@@ -1,20 +1,15 @@
 #define PSEUDO_LEN 10
 
-typedef struct Message {
+typedef struct Header {
     char message_len[4];
     char type[4];
-} Message;
+} Header;
 
 typedef struct Connection {
-    Message message;
+    Header message;
     char *pseudo;
     char *tube;
 } Connection;
-
-typedef struct SResponse {
-    Message message;
-    char id[2];
-} SResponse;   
 
 typedef struct SResponse {
     Message message;
