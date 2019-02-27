@@ -6,27 +6,29 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include "messages.c"
 
-
- 
 #define MAX 80 //Buffer size 
 #define PORT 8080 //Server port 
 #define SA struct sockaddr //socket adresse used to communicated with client 
 
-void client_request(int choice){
-    switch(choice){
-        case 0 : 
-            printf("connecte to the server loading..");
-            connection_request();
-        case 1 : 
-            printf("quit the program..");
-            exit(0);
-    }
-}
-
 //CONNECTION REQUEST
-void connection_request(int sockfd){
-    
+void connection_request(char *buff , int sockfd ,char *pseudo , char *tube){
+    bzero(buff, sizeof(buff));
+    printf("prepare for the connection..");
+
+    Header header;
+    header.type[0] = "H";
+    header.type[1] = "E";
+    header.type[2] = "L";
+    header.type[4] = "O";
+
+    Connection connection;
+    int pseudo_len = strlen(pseudo);
+    int pseudo_tube = strlen(tube);
+
+    int message_len = sizeof(&header);
+
 }
 //LOGOUT REQUEST
 void logout_request(){
@@ -35,6 +37,17 @@ void logout_request(){
 //SEND MESSAGE
 void send_message(){
     
+}
+
+void client_request(int choice){
+    switch(choice){
+        case 0 : 
+            printf("connecte to the server loading..");
+
+        case 1 : 
+            printf("quit the program..");
+            exit(0);
+    }
 }
 
 void func(int sockfd) 

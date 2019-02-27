@@ -2,27 +2,33 @@
 
 typedef struct Header {
     char message_len[4];
-    char type[4];
+    char *type[4];
 } Header;
 
+//connexion message requires a header with length 
 typedef struct Connection {
-    Header message;
+    Header header;
     char *pseudo;
     char *tube;
 } Connection;
 
-typedef struct SResponse {
-    Message message;
+typedef struct SSResponse {
+    Header header;
     char id[2];
-} SResponse;   
+} SSResponse;
+
+typedef struct BSResponse {
+    Header header;
+    
+} BSSResponse;
 
 typedef struct Logout {
-    Message message;
+    Header header;
     char id[2];
 } Logout;
 
 typedef struct UserChat {
-    Message message;
+    Header message;
     char id[2];
     char *body;
 } UserChat;
