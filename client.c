@@ -30,9 +30,19 @@ void connection_request(char *buff , int sockfd ,char *pseudo , char *tube){
     int message_len = sizeof(&header);
 
 }
+
 //LOGOUT REQUEST
-void logout_request(){
-    
+void logout_request(char *buff , int sockfd){
+    Header header;
+    header.type[0] = "B";
+    header.type[1] = "Y";
+    header.type[2] = "E";
+    header.type[3] = "E";
+
+    Logout logout;
+
+    logout.header = header;
+
 }
 //SEND MESSAGE
 void send_message(){
@@ -42,7 +52,7 @@ void send_message(){
 void client_request(int choice){
     switch(choice){
         case 0 : 
-            printf("connecte to the server loading..");
+            printf("connect to the server loading..");
 
         case 1 : 
             printf("quit the program..");
@@ -50,28 +60,30 @@ void client_request(int choice){
     }
 }
 
-void func(int sockfd) 
-{ 
-    char buff[MAX]; 
-    int n; 
-    for (;;) { 
-        bzero(buff, sizeof(buff)); 
-        printf("Enter the string : ");  
-        n = 0; 
+void func(int sockfd)
+{
+    char buff[MAX];
+    int n;
+    for (;;) {
+        bzero(buff, sizeof(buff));
+        printf("Enter the string : ");
+        n = 0;
         while ((buff[n++] = getchar()) != '\n');
-         
-        write(sockfd, buff, sizeof(buff)); 
-        bzero(buff, sizeof(buff)); 
-        read(sockfd, buff, sizeof(buff)); 
-        printf("From Server : %s", buff); 
-        if ((strncmp(buff, "exit", 4)) == 0) { 
-            printf("Client Exit...\n"); 
-            break; 
-        } 
-    } 
-} 
+
+        write(sockfd, buff, sizeof(buff));
+        bzero(buff, sizeof(buff));
+        read(sockfd, buff, sizeof(buff));
+        printf("From Server : %s", buff);
+        if ((strncmp(buff, "exit", 4)) == 0) {
+            printf("Client Exit...\n");
+            break;
+        }
+    }
+}
 
 void menu(){
+    char buff[MAX];
+    int n;
     int run = 1;
     int choice;
     while(run == 1){
@@ -115,8 +127,8 @@ int main()
         printf("connected to the server..\n"); 
   
     // function for chat 
-    
-    // func(sockfd); 
+
+    func(sockfd);
     
   
     // close the socket 

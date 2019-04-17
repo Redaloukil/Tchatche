@@ -25,7 +25,7 @@ void func(int sockfd)
     for (;;) { 
         //buffer initialized to zero 
         bzero(buff, MAX);
-        printf("%s", buff);
+
         // read the message from client and copy it in buffer 
         read(sockfd, buff, sizeof(buff)); 
         // print buffer which contains the client contents 
