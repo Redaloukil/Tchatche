@@ -34,4 +34,6 @@ typedef struct UserChat {
 } UserChat;
 
 
-
+int calculate_message_length(){
+    return 0;
+}
