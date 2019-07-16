@@ -1,5 +1,10 @@
 #define PSEUDO_LEN 10
 
+typedef struct Messages{
+   char length[4];
+} Messages;
+
+
 typedef struct Header {
     char message_len[4];
     char *type[4];

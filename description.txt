@@ -1,4 +1,4 @@
-1 . le client a un pseudo associé a identifiant qui doit etre unique .
-2 . le client pour envoyer des message doit se connecter en envoyant un requette contenant son pseudo et id vide , ce dernier est défini par le serveur .
-3 . le serveur recevant une requette de connexion doit valider le pseudo puis associé a ce client un id .
+1 . le client a un pseudo associé a identifiant qui doit etre unique.
+2 . le client pour envoyer des message doit se connecter en envoyant un requette contenant son pseudo et id vide , ce dernier est défini par le serveur.
+3 . le serveur recevant une requette de connexion doit valider le pseudo puis associé a ce client un id.
 

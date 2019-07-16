@@ -15,8 +15,7 @@
 //CONNECTION REQUEST
 void connection_request(char *buff , int sockfd ,char *pseudo , char *tube){
     bzero(buff, sizeof(buff));
-    printf("prepare for the connection..");
-
+    
     Header header;
     header.type[0] = "H";
     header.type[1] = "E";
@@ -25,9 +24,11 @@ void connection_request(char *buff , int sockfd ,char *pseudo , char *tube){
 
     Connection connection;
     int pseudo_len = strlen(pseudo);
-    int pseudo_tube = strlen(tube);
+    int tube_len = strlen(tube);
 
     int message_len = sizeof(&header);
+
+    
 
 }
 
@@ -46,13 +47,18 @@ void logout_request(char *buff , int sockfd){
 }
 //SEND MESSAGE
 void send_message(){
-    
+    Header header;
+    header.type[0] = "";
+    header.type[0] = "";
+    header.type[0] = "";
+    header.type[0] = "";    
 }
 
 void client_request(int choice){
     switch(choice){
         case 0 : 
             printf("connect to the server loading..");
+            connection_request();
 
         case 1 : 
             printf("quit the program..");
@@ -67,6 +73,7 @@ void func(int sockfd)
     for (;;) {
         bzero(buff, sizeof(buff));
         printf("Enter the string : ");
+        // send the message
         n = 0;
         while ((buff[n++] = getchar()) != '\n');
 
@@ -90,7 +97,7 @@ void menu(){
         printf("##################################");
         printf("Hello world,what you wish to do ?");
         printf("1 - Connect to the server");
-        printf("2 - Connect to the server");
+        printf("2 - Exit the program");
         scanf("you choice %d" , &choice);
         client_request(choice);
     }

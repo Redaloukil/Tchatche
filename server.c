@@ -7,6 +7,7 @@
 #include <sys/socket.h> 
 #include <sys/types.h> 
 #include <unistd.h>
+#include "messages.c"
 
 
 
@@ -15,6 +16,16 @@
 #define CLIENTS_NUM 20
 #define SA struct sockaddr 
 
+
+void connection_request(char *buff , int sockfd ,char *pseudo , char *tube){
+    Header header;
+    header.type[0] = "H";
+    header.type[1] = "E";
+    header.type[2] = "L";
+    header.type[4] = "O";
+
+    
+}
 
 // Function designed for chat between client and server. 
 void func(int sockfd) 
