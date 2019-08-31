@@ -12,59 +12,6 @@
 #define PORT 8080 //Server port 
 #define SA struct sockaddr //socket adresse used to communicated with client 
 
-//CONNECTION REQUEST
-void connection_request(char *buff , int sockfd ,char *pseudo , char *tube){
-    bzero(buff, sizeof(buff));
-    
-    Header header;
-    header.type[0] = "H";
-    header.type[1] = "E";
-    header.type[2] = "L";
-    header.type[4] = "O";
-
-    Connection connection;
-    int pseudo_len = strlen(pseudo);
-    int tube_len = strlen(tube);
-
-    int message_len = sizeof(&header);
-
-    
-
-}
-
-//LOGOUT REQUEST
-void logout_request(char *buff , int sockfd){
-    Header header;
-    header.type[0] = "B";
-    header.type[1] = "Y";
-    header.type[2] = "E";
-    header.type[3] = "E";
-
-    Logout logout;
-
-    logout.header = header;
-
-}
-//SEND MESSAGE
-void send_message(){
-    Header header;
-    header.type[0] = "";
-    header.type[0] = "";
-    header.type[0] = "";
-    header.type[0] = "";    
-}
-
-void client_request(int choice){
-    switch(choice){
-        case 0 : 
-            printf("connect to the server loading..");
-            connection_request();
-
-        case 1 : 
-            printf("quit the program..");
-            exit(0);
-    }
-}
 
 void func(int sockfd)
 {
@@ -85,21 +32,6 @@ void func(int sockfd)
             printf("Client Exit...\n");
             break;
         }
-    }
-}
-
-void menu(){
-    char buff[MAX];
-    int n;
-    int run = 1;
-    int choice;
-    while(run == 1){
-        printf("##################################");
-        printf("Hello world,what you wish to do ?");
-        printf("1 - Connect to the server");
-        printf("2 - Exit the program");
-        scanf("you choice %d" , &choice);
-        client_request(choice);
     }
 }
 
@@ -134,10 +66,8 @@ int main()
         printf("connected to the server..\n"); 
   
     // function for chat 
-
     func(sockfd);
     
-  
     // close the socket 
     close(sockfd); 
 } 

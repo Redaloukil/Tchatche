@@ -25,6 +25,7 @@ void main(){
         printf("HELLO TO TCHATCH APPLICATION\n");
         printf("CHOOSE AND OPTION : \n");
         printf("1 - CHOICE 1\n");
+            
         printf("2 - CHOICE 2\n");
         printf("3 - CHOICE 3\n");
         printf("4 - QUIT 4\n");

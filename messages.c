@@ -10,12 +10,6 @@ typedef struct Header {
     char *type[4];
 } Header;
 
-//connexion message requires a header with length 
-typedef struct Connection {
-    Header header;
-    char *pseudo;
-    char *tube;
-} Connection;
 
 typedef struct SSResponse {
     Header header;
