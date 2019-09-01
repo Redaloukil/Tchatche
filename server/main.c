@@ -8,6 +8,7 @@
 #include <sys/types.h> 
 #include <unistd.h>
 #include <arpa/inet.h>
+#include <pthread.h>
 
 
 #define MAX 1024 
@@ -17,13 +18,20 @@
 
 
 // Function designed for chat between client and server. 
-void func(int sockfd) 
+void client_messaging(int sockfd , int client_id) 
 { 
     char buff[MAX]; 
     int n; 
     
+    
     // infinite loop for chat 
     for (;;) { 
+        //listening through port for request
+
+        //read request from clients
+
+        //interpret the request by reading headers
+        
         //buffer initialized to zero 
         bzero(buff, MAX);
         // read the message from client and copy it in buffer 
@@ -33,7 +41,10 @@ void func(int sockfd)
         bzero(buff, MAX); 
         n = 0; 
         // copy server message in the buffer 
-        while ((buff[n++] = getchar()) != '\n') 
+        while ((buff[n++] = getchar()) != '\n');
+        // Interpret the message 
+        interpret_message(buff , n);
+        
         // and send that buffer to client 
         write(sockfd, buff, sizeof(buff)); 
   
@@ -48,8 +59,10 @@ void func(int sockfd)
 // Driver function 
 int main() 
 { 
+    int client_id = 0;
     int sockfd, connfd, len; 
     struct sockaddr_in servaddr, cli; 
+    int RUN = 1;
   
     // socket create and verification 
     sockfd = socket(AF_INET, SOCK_STREAM, 0); 
@@ -86,16 +99,22 @@ int main()
     len = sizeof(cli); 
   
     // Accept the data packet from client and verification 
-    connfd = accept(sockfd, (SA*)&cli, &len); 
-    if (connfd < 0) { 
-            printf("server acccept failed...\n"); 
-            exit(0); 
-    } 
-    else
-            printf("server acccept the client...\n"); 
+    while (RUN){
+        connfd = accept(sockfd, (SA*)&cli, &len); 
+
+        if (connfd < 0) { 
+                printf("server acccept failed...\n"); 
+                exit(0); 
+        } 
+        else
+            client_id++;
+            printf("server acccept the client %d...\n" , client_id); 
+        // Function for chatting between client and server 
+        pthread_create();
+        func(connfd ,client_id); 
+    }
     
-    // Function for chatting between client and server 
-    func(connfd); 
+    
     
     // After chatting close the socket 
     close(sockfd); 

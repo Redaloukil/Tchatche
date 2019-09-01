@@ -45,6 +45,7 @@ void func(int sockfd)
   
 int main() 
 { 
+    int client_num;
     int sockfd, connfd; 
     struct sockaddr_in servaddr, cli; 
   
