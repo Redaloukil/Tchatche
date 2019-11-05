@@ -9,7 +9,6 @@
 #include "client-utils.c"
 
 #define MAX 1024 //Buffer size 
-#define PORT 8000 //Server port 
 #define SA struct sockaddr //socket adresse used to communicated with client 
 
 
@@ -46,12 +45,14 @@ void func(int sockfd)
 int main() 
 { 
     int choice;
-    int id= 0;
-    choice = client_main_menu();
-    // client logic identification
-    printf("you choosed %d" , choice);
     
-    client client = client_connect(id);
+    int id= 0;
+    
+    // choice = client_main_menu();
+    // // client logic identification
+    // printf("you choosed %d" , choice);
+     
+    client client = client_server_connect(id);
     id++;
     printf("%d" , client.id);
     // printf("%s" , client.serveraddr.sin_addr);
@@ -63,7 +64,7 @@ int main()
   
     // // socket create and varification 
     // sockfd = socket(AF_INET, SOCK_STREAM, 0); 
-    // if (sockfd == -1) { 
+    // if (sockfd == -1) {  
     //     printf("socket creation failed...\n"); 
     //     exit(0); 
     // } 
@@ -86,7 +87,7 @@ int main()
     //     printf("connected to the server..\n"); 
     
     // function for chat 
-    // func(sockfd);
+    client_main_menu(client);
     
     // // close the socket 
     // close(sockfd); 
