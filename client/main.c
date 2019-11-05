@@ -13,6 +13,25 @@
 #define SA struct sockaddr //socket adresse used to communicated with client 
 
 
+void client_main_menu(){
+    int client_choice = 1;
+    
+    printf("READY TO CONNECT TO THE SERVER\n");
+    printf("1 - YES\n");
+    printf("2 - NO\n");
+
+    switch (client_choice){
+    case 1:
+        printf("start connecting with the server\n");
+        break;
+    case 2:
+        printf("Thank you for dear client..next time\n");
+        break;
+    default:
+        break;
+    }
+}
+
 void func(int sockfd)
 {
     //Messaging buffer
@@ -21,13 +40,12 @@ void func(int sockfd)
     //Reading iterator
     int n;
     
+    //wait for the client to read the message
     for (;;) {
         //Initialize messaging buffer
         bzero(buff, sizeof(buff));
-
-        
-               
-        // send the message
+    
+            // send the message
         n = 0;
         while ((buff[n++] = getchar()) != '\n');
 
@@ -42,12 +60,18 @@ void func(int sockfd)
     }
 }
 
-  
 int main() 
 { 
-    int client_num;
-    int sockfd, connfd; 
-    struct sockaddr_in servaddr, cli; 
+    
+    client_main_menu();
+       
+
+    //client logic identification
+    
+    
+    //client socket response and connection response
+    int sockfd; 
+    struct sockaddr_in serveraddr; 
   
     // socket create and varification 
     sockfd = socket(AF_INET, SOCK_STREAM, 0); 
@@ -58,15 +82,15 @@ int main()
     else
         printf("Socket successfully created.. \n"); 
         
-    bzero(&servaddr, sizeof(servaddr)); 
+    bzero(&serveraddr, sizeof(serveraddr)); 
   
     // assign IP, PORT 
-    servaddr.sin_family = AF_INET; 
-    servaddr.sin_addr.s_addr = inet_addr("127.0.0.1"); 
-    servaddr.sin_port = htons(PORT); 
+    serveraddr.sin_family = AF_INET; 
+    serveraddr.sin_addr.s_addr = inet_addr("127.0.0.1"); 
+    serveraddr.sin_port = htons(PORT); 
   
     // connect the client socket to server socket 
-    if (connect(sockfd, (SA*)&servaddr, sizeof(servaddr)) != 0) { 
+    if (connect(sockfd, (SA*)&serveraddr, sizeof(serveraddr)) != 0) { 
         printf("connection with the server failed...\n"); 
         exit(0); 
     } 

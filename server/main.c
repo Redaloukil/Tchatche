@@ -110,7 +110,7 @@ int main()
             client_id++;
             printf("server acccept the client %d...\n" , client_id); 
         // Function for chatting between client and server 
-        pthread_create();
+        
         func(connfd ,client_id); 
     }
     
