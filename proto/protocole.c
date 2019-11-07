@@ -9,6 +9,8 @@ char shut[4] = "SHUT";
 char dbg[4] = "DEBG";
 
 
+
+
 typedef struct Length {
     char length[4]; 
 } Length ;
@@ -18,7 +20,7 @@ typedef struct Type {
 } Type ;
 
 typedef struct Body {
-    
+
 } Body ;
 
 typedef struct Protocole {
@@ -26,18 +28,6 @@ typedef struct Protocole {
     char *t;
     Body b;
 } Protocole;
-
-
-int main(){
-    Protocole message;
-    message.t = "HELO";
-    message.l = "0013"; 
-    message.b = "HELLLO WORLD THIS ME";
-
-    
-    
-    return 0;
-}
 
 
 

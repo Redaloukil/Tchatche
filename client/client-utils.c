@@ -10,10 +10,12 @@
 
 #define PORT 9000 //Server port
 #define SA struct sockaddr //socket adresse used to communicated with client 
+#define MAX 1024 //Buffer size 
 
 
-typedef struct client{
+typedef struct client {
     int id; // client id
+    char buffer[MAX];
     int sockfd; //socket connexion response
     struct sockaddr_in serveraddr; //server address
     int connected;
@@ -30,8 +32,19 @@ typedef struct client{
 //     return client_choice;
 // }
 
-void client_connect(){
+void client_connect(client client){
     printf("connect client");
+
+    bzero(client.buffer , sizeof(client.buffer));
+    write(client.sockfd, client.buffer, sizeof(client.buffer));
+    bzero(client.buffer, sizeof(client.buffer));
+    read(client.sockfd, client.buffer, sizeof(client.buffer));
+    printf("From Server : %s", client.buffer);
+
+    // if ((strncmp(client.buffer, "exit", 4)) == 0) {
+    //     printf("Client Exit...\n");
+    //     break;
+    // }
 }
 
 void client_logout(){
@@ -76,21 +89,31 @@ client client_server_connect(int id){
     return cli;
 }
 
-int client_main_menu(client client){
+void client_main_menu(client client){
     int choice;
     printf("#######READY TO CONNECT TO THE SERVER#######\n");
     printf("1 - YES\n");
     printf("2 - NO\n");
-    scanf("%d" , &choice);
-    switch (choice)
-    {
-    case 1:
-        client_connect();
-    case 2:
-        exit(0);    
-    default:
-        break;
+    scanf("%d\n" , &choice);
+    
+    printf("you choosed : %d\n", choice);
+    if (choice == 1){
+        printf("hell");
+        client_connect(client);
     }
+        
 }
 
+int client_connected_main_menu(client client){
+    int choice;
+    printf("#######YOU ARE CONNECTED WELCOME########\n");
+    printf("1 - SEND PUBLIC MESSAGE");
+    printf("2 - SEND PRIVATE MESSAGE");
 
+    scanf("%d\n" , &choice);
+
+    if (choice == 1){
+        printf("we will try to connect you");
+        client_connect(client);
+    }
+}

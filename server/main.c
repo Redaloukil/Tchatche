@@ -9,11 +9,12 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <pthread.h>
+#include "server-utils.c"
 
 #define MAX 1024 
 #define PORT 9000 
 #define CLIENTS_NUM 20
-#define SA struct sockaddr 
+#define SA struct sockaddr
 
 // Function designed for chat between client and server. 
 void func(int sockfd) 
@@ -57,6 +58,7 @@ void func(int sockfd)
   
 // Driver function 
 int main(){ 
+    int choice;
     int client_id = 0;
     int client_num = 0;
     
@@ -65,7 +67,18 @@ int main(){
     struct sockaddr_in servaddr, cli; 
     
     int RUN = 1;
-  
+    
+    printf("WELCOME TO THE SERVER DO YOU WANT TO START LISTENING TO %d\n" , PORT);
+    printf("1 - YES\n");
+    printf("2 - NO\n");
+    
+    scanf("%d" , &choice);
+    if(choice == 2){
+        exit(0);
+    }
+    
+    printf("WELCOME WE GONNA START THE SERVER NOW LISTENING TO %d\n" , PORT);
+    
     // socket create and verification 
     sockfd = socket(AF_INET, SOCK_STREAM, 0); 
     if (sockfd == -1) { 
@@ -99,16 +112,32 @@ int main(){
         printf("Server listening..\n"); 
     
     
-  
+    //accept mucltiple client and start thread to communicate with the client 
+
     // Accept the data packet from client and verification 
-    connfd = accept(sockfd, (SA*)&cli, &len); 
-    if (connfd < 0) { 
-        printf("server acccept failed...\n"); 
-        exit(0); 
-    }else {
-        client_id++;
-        printf("server acccept the client %d...\n" , client_id);
+
+    while(RUN){
+        connfd = accept(sockfd, (SA*)&cli, &len); 
+        if (connfd < 0) { 
+            
+            printf("server acccept failed...\n"); 
+            exit(0); 
+        
+        }else {
+            
+            client_id++;
+            
+            printf("server acccept the client %d...\n" , client_id);
+            
+            //lunch id serving thread 
+            pthread_t thread;
+            printf("creating the serving thread");
+            
+            int tid = pthread_create(&thread , NULL ,(void*)func , (void*)&connfd);
+            printf("thread succesfully created");
+        }   
     }
+    
 
     func(connfd); 
     // After chatting close the socket 
