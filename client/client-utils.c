@@ -91,10 +91,6 @@ client client_server_connect(int id){
 
 void client_main_menu(client client){
     int choice;
-    printf("#######READY TO CONNECT TO THE SERVER#######\n");
-    printf("1 - YES\n");
-    printf("2 - NO\n");
-    scanf("%d\n" , &choice);
     
     printf("you choosed : %d\n", choice);
     if (choice == 1){

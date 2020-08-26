@@ -1,33 +1,32 @@
-char helo[4] = "HELO";
-char ok[4] = "OKOK";
-char bad[4] = "BADD";
-char bye[4] = "BYEE";
-char pubm[4] = "BCST";
-char prim[4] = "PRVT";
-char list[4] = "LIST";
-char shut[4] = "SHUT";
-char dbg[4] = "DEBG";
+#define HELO "HELO";
 
 
+char OKOK[4] = "OKOK";
+char BADE[4] = "BADD";
+char BYEE[4] = "BYEE";
+char PUBM[4] = "BCST";
+char PRIM[4] = "PRVT";
+char LIST[4] = "LIST";
+char SHUT[4] = "SHUT";
+char DEBG[4] = "DEBG";
 
+// typedef struct Length {
+//     char length[4]; 
+// } Length ;
 
-typedef struct Length {
-    char length[4]; 
-} Length ;
+// typedef struct Type {
+//     char type[4]
+// } Type;
 
-typedef struct Type {
-    char type[4]
-} Type ;
+// typedef struct Body {
 
-typedef struct Body {
+// } Body ;
 
-} Body ;
-
-typedef struct Protocole {
-    char *l;
-    char *t;
-    Body b;
-} Protocole;
+// typedef struct Protocole {
+//     char *l;
+//     char *t;
+//     Body b;
+// } Protocole;
 
 
 

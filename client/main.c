@@ -1,96 +1,112 @@
 #include <netdb.h> 
 #include <stdio.h> 
+#include <unistd.h>
 #include <stdlib.h> 
 #include <string.h> 
-#include <netinet/in.h> 
 #include <sys/socket.h>
-#include <unistd.h>
 #include <arpa/inet.h>
-#include "client-utils.c"
+#define MAX 80 
+#define PORT 8080 
+#define SA struct sockaddr 
 
-#define MAX 1024 //Buffer size 
-#define SA struct sockaddr //socket adresse used to communicated with client 
+void interpret(char* message){
+	printf("From Server : %s", message);
+	 int message_size = sizeof(message);
+    //extract
+    if(memcmp(message , "HELO" , 4) === 0){
+		return (char*)("HELO");
+	};
+	return (char*)("DECO");
 
 
-
-
-void func(int sockfd)
-{
-    //Messaging buffer
-    char buff[MAX];
-    
-    //Reading iterator
-    int n;
-    
-    //wait for the client to read the message
-    for (;;) {
-        //Initialize messaging buffer
-        bzero(buff, sizeof(buff));
-    
-            // send the message
-        n = 0;
-        while ((buff[n++] = getchar()) != '\n');
-
-        write(sockfd, buff, sizeof(buff));
-        bzero(buff, sizeof(buff));
-        read(sockfd, buff, sizeof(buff));
-        printf("From Server : %s", buff);
-        if ((strncmp(buff, "exit", 4)) == 0) {
-            printf("Client Exit...\n");
-            break;
-        }
-    }
 }
 
-int main() 
-{ 
-    int choice;
-    
-    int id= 0;
-    
-    // choice = client_main_menu();
-    // // client logic identification
-    // printf("you choosed %d" , choice);
-     
-    client client = client_server_connect(id);
-    id++;
-    printf("%d" , client.id);
-    // printf("%s" , client.serveraddr.sin_addr);
-    
+void connection(int sockfd) { 
+	char buff[MAX]; 
+	int reader; 
+	int select = 0;
+	printf("DO YOU WANT TO CONNECT\n");
+    printf("0 - NO\n");
+    printf("1 - YES\n");
 
-    // //client socket response and connection response
-    // int sockfd; 
-    // struct sockaddr_in serveraddr; 
-  
-    // // socket create and varification 
-    // sockfd = socket(AF_INET, SOCK_STREAM, 0); 
-    // if (sockfd == -1) {  
-    //     printf("socket creation failed...\n"); 
-    //     exit(0); 
-    // } 
-    // else
-    //     printf("Socket successfully created.. \n"); 
-        
-    // bzero(&serveraddr, sizeof(serveraddr)); 
-  
-    // // assign IP, PORT 
-    // serveraddr.sin_family = AF_INET; 
-    // serveraddr.sin_addr.s_addr = inet_addr("127.0.0.1"); 
-    // serveraddr.sin_port = htons(PORT); 
-  
-    // // connect the client socket to server socket 
-    // if (connect(sockfd, (SA*)&serveraddr, sizeof(serveraddr)) != 0) { 
-    //     printf("connection with the server failed...\n"); 
-    //     exit(0); 
-    // } 
-    // else
-    //     printf("connected to the server..\n"); 
-    
-    // function for chat 
-    client_main_menu(client);
-    
-    // // close the socket 
-    // close(sockfd); 
+    scanf("%d", &select);
 
-    //start application menu 
+    switch(select){
+		case 0:
+		    break;
+		case 1:
+	            memcpy(buff , "HELO" , sizeof("HELO"));
+		        bzero(buff, sizeof(buff)); 
+		        reader = 0; 
+		        while ((buff[reader++] = getchar()) != '\n'); 
+		        write(sockfd, buff, sizeof(buff)); 
+		        bzero(buff, sizeof(buff)); 
+		        read(sockfd, buff, sizeof(buff));
+				//read the response ( if accepted , get the id and pseudo and ) 
+		       
+				interpret(buff); 
+		        if ((strncmp(buff, "exit", 4)) == 0) { 
+			    printf("Client Exit...\n"); 
+			        break; 
+		        } 
+	        break;
+		default:
+			break;   	
+		} 
+}
+
+
+int main() { 
+	char* pseudo;
+	int sockfd, connfd; 
+	struct sockaddr_in servaddr, cli; 
+
+	// socket create and varification 
+	sockfd = socket(AF_INET, SOCK_STREAM, 0); 
+	if (sockfd == -1) { 
+		printf("socket creation failed...\n"); 
+		exit(0); 
+	} 
+	else
+		printf("Socket successfully created..\n"); 
+	bzero(&servaddr, sizeof(servaddr)); 
+
+	// assign IP, PORT 
+	servaddr.sin_family = AF_INET; 
+	servaddr.sin_addr.s_addr = inet_addr("127.0.0.1"); 
+	servaddr.sin_port = htons(PORT); 
+
+	// connect the client socket to server socket 
+	if (connect(sockfd, (SA*)&servaddr, sizeof(servaddr)) != 0) { 
+		printf("connection with the server failed...\n"); 
+		exit(0); 
+	} 
+	else
+		printf("connected to the server..\n"); 
+
+	// function for chat 
+	connection(sockfd); 
+
+	// close the socket 
+	close(sockfd); 
 } 
+
+
+void send_connect_message(char pseudo , int sockfd , char buff ){
+	
+}
+
+void send_deconnect_message(char pseudo , int sockfd , char buff){
+	//
+}
+
+void translate(char* message){
+    //get message size 
+    int message_size = sizeof(message);
+    //extract
+    char type[4];
+	memcpy(&type , message , 4);
+    printf("%s" , type);
+
+	char *message_body = "";
+}
