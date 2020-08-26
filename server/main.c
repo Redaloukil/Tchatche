@@ -15,15 +15,12 @@
 int clients[MAX_CLIENTS];
 
 char* translate(char* message){
-    //get message size 
-	printf("message received from client %s" , message);
     int message_size = sizeof(message);
-    //extract
-    if(memcmp(message , "HELO" , 4) === 0){
-		return (char*)("HELO");
-	};
-	return (char*)("DECO");
-
+	
+	//respond to client connection 
+	return (char*)("OKOK");
+	
+	
 }
 
 // Function designed for chat between client and server. 
@@ -32,12 +29,11 @@ void connection(int sockfd) {
 	int n;
     for (;;) { 
                 bzero(buff, MAX); 
-
-                // read the message from client and copy it in buffer 
-                read(sockfd, buff, sizeof(buff)); 
-                
-                // translate message  
-                char* response = translate(buff);
+				// read the message from client and copy it in buffer 
+				
+				read(sockfd, buff, sizeof(buff)); 
+				// translate message  
+				char* response = translate(buff);
 
                 bzero(buff, MAX); 
                 n = 0; 

@@ -9,16 +9,15 @@
 #define PORT 8080 
 #define SA struct sockaddr 
 
-void interpret(char* message){
-	printf("From Server : %s", message);
-	 int message_size = sizeof(message);
-    //extract
-    if(memcmp(message , "HELO" , 4) === 0){
-		return (char*)("HELO");
-	};
-	return (char*)("DECO");
+int connection_response(char* message){
+	printf("From Server : %s \n", message);
+	return 0;
+}
 
+void chat(int sockfd){
+	for(;;){
 
+	}
 }
 
 void connection(int sockfd) { 
@@ -35,16 +34,20 @@ void connection(int sockfd) {
 		case 0:
 		    break;
 		case 1:
-	            memcpy(buff , "HELO" , sizeof("HELO"));
-		        bzero(buff, sizeof(buff)); 
-		        reader = 0; 
-		        while ((buff[reader++] = getchar()) != '\n'); 
+	            bzero(buff, sizeof(buff));
+				memcpy(buff , "HELO" , sizeof("HELO"));
+		        // reader = 0; 
+		        // while ((buff[reader++] = getchar()) != '\n'); 
+				printf("message send %s\n" , buff);
 		        write(sockfd, buff, sizeof(buff)); 
 		        bzero(buff, sizeof(buff)); 
 		        read(sockfd, buff, sizeof(buff));
+				int response = 0;
+				response = connection_response(buff);
+				printf("response :%d\n",response);
+				if (response == 0)
+					chat(sockfd);
 				//read the response ( if accepted , get the id and pseudo and ) 
-		       
-				interpret(buff); 
 		        if ((strncmp(buff, "exit", 4)) == 0) { 
 			    printf("Client Exit...\n"); 
 			        break; 
