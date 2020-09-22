@@ -5,18 +5,29 @@
 #include <string.h> 
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include "../proto/protocole.c"
 #define MAX 80 
 #define PORT 8080 
 #define SA struct sockaddr 
 
 int connection_response(char* message){
-	printf("From Server : %s \n", message);
-	return 0;
+	char *type;
+	memcpy(type ,message,sizeof("OKOK"));
+
+	if(memcmp(message , "OKOK", sizeof("OKOK")) == 0){
+		printf("%s" ,type );
+		return 0;
+	}
+	else if(memcmp(message , "BADD", sizeof("BADD")) == 0){
+		printf("%s" ,type);
+		return 1;
+	}
 }
 
 void chat(int sockfd){
 	for(;;){
-
+		printf("start chatting");
+		
 	}
 }
 
@@ -36,17 +47,17 @@ void connection(int sockfd) {
 		case 1:
 	            bzero(buff, sizeof(buff));
 				memcpy(buff , "HELO" , sizeof("HELO"));
-		        // reader = 0; 
-		        // while ((buff[reader++] = getchar()) != '\n'); 
-				printf("message send %s\n" , buff);
+		        printf("SEND : %s\n" , buff);
 		        write(sockfd, buff, sizeof(buff)); 
 		        bzero(buff, sizeof(buff)); 
 		        read(sockfd, buff, sizeof(buff));
 				int response = 0;
 				response = connection_response(buff);
-				printf("response :%d\n",response);
+				printf("RESPONSE :%d\n",response);
 				if (response == 0)
 					chat(sockfd);
+				if (response == 1)
+					break;
 				//read the response ( if accepted , get the id and pseudo and ) 
 		        if ((strncmp(buff, "exit", 4)) == 0) { 
 			    printf("Client Exit...\n"); 
@@ -72,6 +83,7 @@ int main() {
 	} 
 	else
 		printf("Socket successfully created..\n"); 
+	
 	bzero(&servaddr, sizeof(servaddr)); 
 
 	// assign IP, PORT 
@@ -106,10 +118,9 @@ void send_deconnect_message(char pseudo , int sockfd , char buff){
 void translate(char* message){
     //get message size 
     int message_size = sizeof(message);
-    //extract
+    //extract type
     char type[4];
 	memcpy(&type , message , 4);
     printf("%s" , type);
-
 	char *message_body = "";
 }
