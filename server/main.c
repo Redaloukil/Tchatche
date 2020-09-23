@@ -15,9 +15,18 @@
 int clients[MAX_CLIENTS];
 
 char* translate(char* message){
-	printf("translate");
-    int message_size = sizeof(message);
-	return (char*)("OKOK");
+	char* response = malloc(80);
+	char type[4];
+	memcpy(type , message , 4);
+	if(memcmp(type , HELO , sizeof(OKOK)) == 0){
+		//generate a pseudo for user 
+		char *client_num = "10";
+		strcpy(response , OKOK);
+		strcpy(response , client_num);
+		return (char*)(response);	
+	}
+	strcpy(response , BADD);
+	return (char*)(response);	
 }
 
 // Function designed for chat between client and server. 
@@ -37,7 +46,7 @@ void connection(int sockfd) {
                 n = 0; 
                 // copy server message in the buffer 
                 // while ((buff[n++] = getchar()) != '\n') ; 	
-                memcpy(buff , response , 4 );
+                memcpy(buff , response , 8 );
 
                 // and send that buffer to client 
                 write(sockfd, buff, sizeof(buff)); 

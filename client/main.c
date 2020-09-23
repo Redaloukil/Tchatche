@@ -11,18 +11,21 @@
 #define SA struct sockaddr 
 
 int connection_response(char* message){
-	char *type;
-	memcpy(type ,message,sizeof("OKOK"));
-
-	if(memcmp(message , "OKOK", sizeof("OKOK")) == 0){
-		printf("%s" ,type );
+	char type[4];
+	char response_body[10]; 
+	printf("hole message %s\n" , message);
+	memcpy(type ,message,sizeof(OKOK));
+	memcpy( response_body, message + 4, sizeof(OKOK));
+	printf("response type %s \n" , type);
+	printf("response body %s \n" , response_body);
+	
+	if(memcmp(type , "OKOK", sizeof("OKOK")) == 0){
 		return 0;
 	}
-	else if(memcmp(message , "BADD", sizeof("BADD")) == 0){
-		printf("%s" ,type);
+	if(memcmp(type , "BADD", sizeof("BADD")) == 0){
 		return 1;
 	}
-}
+}	
 
 void chat(int sockfd){
 	for(;;){
@@ -46,21 +49,23 @@ void connection(int sockfd) {
 		    break;
 		case 1:
 	            bzero(buff, sizeof(buff));
-				memcpy(buff , "HELO" , sizeof("HELO"));
+				
+				memcpy(buff , HELO , sizeof("HELO"));
 		        printf("SEND : %s\n" , buff);
-		        write(sockfd, buff, sizeof(buff)); 
-		        bzero(buff, sizeof(buff)); 
-		        read(sockfd, buff, sizeof(buff));
-				int response = 0;
-				response = connection_response(buff);
-				printf("RESPONSE :%d\n",response);
+		        
+				write(sockfd, buff, sizeof(buff)); 
+		        
+				bzero(buff, sizeof(buff)); 
+		        
+				read(sockfd, buff, sizeof(buff));
+				int response = connection_response(buff);
+				
 				if (response == 0)
-					chat(sockfd);
-				if (response == 1)
 					break;
-				//read the response ( if accepted , get the id and pseudo and ) 
-		        if ((strncmp(buff, "exit", 4)) == 0) { 
-			    printf("Client Exit...\n"); 
+
+				if ((strncmp(buff, "exit", 4)) == 0) { 
+			    
+				printf("Client Exit...\n"); 
 			        break; 
 		        } 
 	        break;

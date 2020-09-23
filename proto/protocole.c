@@ -1,8 +1,8 @@
-#define HELO "HELO";
 
 
+char HELO[4] = "HELO";
 char OKOK[4] = "OKOK";
-char BADE[4] = "BADD";
+char BADD[4] = "BADD";
 char BYEE[4] = "BYEE";
 char PUBM[4] = "BCST";
 char PRIM[4] = "PRVT";
