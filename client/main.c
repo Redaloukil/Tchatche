@@ -10,12 +10,27 @@
 #define PORT 8080 
 #define SA struct sockaddr 
 
+int client_id;
+
 int connection_response(char* message){
 	char type[4];
 	char response_body[10]; 
-	printf("hole message %s\n" , message);
-	memcpy(type ,message,sizeof(OKOK));
-	memcpy( response_body, message + 4, sizeof(OKOK));
+	
+	bzero(type, sizeof(type));
+	bzero(response_body , sizeof(response_body));
+
+	printf("%s\n" , message);
+	printf("%ld\n" , sizeof(message));
+	
+	type[0] = message[0];
+	type[1] = message[1];
+	type[2] = message[2];
+	type[3] = message[3];
+
+	printf("%c" , message[3]);
+	//get response body --OKOK --BADD
+	memcpy(response_body, message + 4, 2);
+	
 	printf("response type %s \n" , type);
 	printf("response body %s \n" , response_body);
 	
@@ -30,7 +45,6 @@ int connection_response(char* message){
 void chat(int sockfd){
 	for(;;){
 		printf("start chatting");
-		
 	}
 }
 
@@ -49,7 +63,6 @@ void connection(int sockfd) {
 		    break;
 		case 1:
 	            bzero(buff, sizeof(buff));
-				
 				memcpy(buff , HELO , sizeof("HELO"));
 		        printf("SEND : %s\n" , buff);
 		        
@@ -59,9 +72,13 @@ void connection(int sockfd) {
 		        
 				read(sockfd, buff, sizeof(buff));
 				int response = connection_response(buff);
-				
-				if (response == 0)
+				if (response == 0){
 					break;
+				}
+				//if response is positive , create new chat thread
+				else {
+					printf("connection accepted");
+				}
 
 				if ((strncmp(buff, "exit", 4)) == 0) { 
 			    

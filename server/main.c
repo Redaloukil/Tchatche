@@ -12,21 +12,26 @@
 #define PORT 8080 
 #define SA struct sockaddr 
 
-int clients[MAX_CLIENTS];
+char clients[MAX_CLIENTS][1];
 
 char* translate(char* message){
-	char* response = malloc(80);
+	char* response = malloc(10);
 	char type[4];
+	char client[2] = "10";
+	
+	bzero(response, MAX); 
 	memcpy(type , message , 4);
-	if(memcmp(type , HELO , sizeof(OKOK)) == 0){
-		//generate a pseudo for user 
-		char *client_num = "10";
-		strcpy(response , OKOK);
-		strcpy(response , client_num);
+	
+	if(memcmp(type , HELO , 4) == 0){
+		memcpy(response ,OKOK, 4);
+		memcpy(&response[4] , client,2);
+		return (char*)(response);	
+	}else if (memcmp(type , BADD , 4) == 0) {
+		memcpy(response , BADD, 4);
 		return (char*)(response);	
 	}
-	strcpy(response , BADD);
-	return (char*)(response);	
+	
+	
 }
 
 // Function designed for chat between client and server. 
