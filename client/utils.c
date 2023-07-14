@@ -1,73 +1,39 @@
-#include <netdb.h> 
-#include <stdio.h> 
-#include <stdlib.h> 
-#include <string.h> 
-#include <netinet/in.h> 
-#include <sys/socket.h>
-#include <unistd.h>
-#include <arpa/inet.h>
-#include "messages.c"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "../proto/utils.h"
 
-#define MAX 80 //Buffer size 
-#define PORT 8080 //Server port 
-#define SA struct sockaddr //socket adresse used to communicated with client 
+char* get_user_input() {
+    char buffer[1024];
+    char* input = NULL;
+    size_t input_size = 0;
 
+    printf("Enter your input: ");
 
-void func(int sockfd)
-{
-    char buff[MAX];
-    int n;
-    for (;;) {
-        bzero(buff, sizeof(buff));
-        printf("Enter the string : ");
-        // send the message
-        n = 0;
-        while ((buff[n++] = getchar()) != '\n');
+    // Read user input
+    if (fgets(buffer, sizeof(buffer), stdin) != NULL) {
+        // Remove trailing newline character
+        buffer[strcspn(buffer, "\n")] = '\0';
 
-        write(sockfd, buff, sizeof(buff));
-        bzero(buff, sizeof(buff));
-        read(sockfd, buff, sizeof(buff));
-        printf("From Server : %s", buff);
-        if ((strncmp(buff, "exit", 4)) == 0) {
-            printf("Client Exit...\n");
-            break;
-        }
+        // Allocate memory for the input string
+        input_size = strlen(buffer) + 1;
+        input = (char*)malloc(input_size * sizeof(char));
+
+        // Copy the input to the allocated memory
+        strncpy(input, buffer, input_size);
     }
+
+    return input;
 }
 
-  
-int main() 
-{ 
-    int sockfd, connfd; 
-    struct sockaddr_in servaddr, cli; 
-  
-    // socket create and varification 
-    sockfd = socket(AF_INET, SOCK_STREAM, 0); 
-    if (sockfd == -1) { 
-        printf("socket creation failed...\n"); 
-        exit(0); 
-    } 
-    else
-        printf("Socket successfully created.. \n"); 
-        
-    bzero(&servaddr, sizeof(servaddr)); 
-  
-    // assign IP, PORT 
-    servaddr.sin_family = AF_INET; 
-    servaddr.sin_addr.s_addr = inet_addr("127.0.0.1"); 
-    servaddr.sin_port = htons(PORT); 
-  
-    // connect the client socket to server socket 
-    if (connect(sockfd, (SA*)&servaddr, sizeof(servaddr)) != 0) { 
-        printf("connection with the server failed...\n"); 
-        exit(0); 
-    } 
-    else
-        printf("connected to the server..\n"); 
-  
-    // function for chat 
-    func(sockfd);
-    
-    // close the socket 
-    close(sockfd); 
-} 
+char* concatenate_message(TchatcheMessage* message) {
+    size_t totalLength = atoi(message->messageLength) + 1;  // Total length including null character
+    char* result = malloc(totalLength * sizeof(char));
+
+    // Concatenate the message length, message type, and message body
+    strcpy(result,message->messageLength);
+    strcat(result,message->messageType);
+    strcat(result,message->messageBody);
+
+    return result;
+}
