@@ -1,0 +1,15 @@
+{
+    "files.associations": {
+        "netdb.h": "c",
+        "in.h": "c",
+        "inet.h": "c",
+        "pthread.h": "c",
+        "protocole.h": "c",
+        "utils.h": "c",
+        "string.h": "c"
+    },
+    "cSpell.words": [
+        "helo",
+        "Tchatche"
+    ]
+}

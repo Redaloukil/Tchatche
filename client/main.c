@@ -1,96 +1,189 @@
-#include <netdb.h> 
-#include <stdio.h> 
-#include <stdlib.h> 
-#include <string.h> 
-#include <netinet/in.h> 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <sys/socket.h>
-#include <unistd.h>
 #include <arpa/inet.h>
-#include "client-utils.c"
+#include <unistd.h>
+#include "../proto/protocole.h"
+#include "../proto/utils.h"
+#include "utils.h"
 
-#define MAX 1024 //Buffer size 
-#define SA struct sockaddr //socket adresse used to communicated with client 
+#define BUFFER_SIZE 1024
+
+TchatcheMessage get_connection_request_message() {
+    TchatcheMessage message;
+
+    printf("Choose a username : \n");
+    char* username = get_user_input();
+
+    printf("Choose a channel name to connect to : \n");
+    char* tunnel = get_user_input();
+    char* result = (char*)malloc((strlen(username) + strlen(tunnel) + 1) * sizeof(char));
+
+    strcpy(result, username);
+    strcat(result, tunnel);
 
 
+    size_t bodyLength = strlen(result);
 
-
-void func(int sockfd)
-{
-    //Messaging buffer
-    char buff[MAX];
+    size_t totalLength = 4 + 4 + bodyLength;
     
-    //Reading iterator
-    int n;
-    
-    //wait for the client to read the message
-    for (;;) {
-        //Initialize messaging buffer
-        bzero(buff, sizeof(buff));
-    
-            // send the message
-        n = 0;
-        while ((buff[n++] = getchar()) != '\n');
+    snprintf(message.messageLength, sizeof(message.messageLength), "%04lu", totalLength);
 
-        write(sockfd, buff, sizeof(buff));
-        bzero(buff, sizeof(buff));
-        read(sockfd, buff, sizeof(buff));
-        printf("From Server : %s", buff);
-        if ((strncmp(buff, "exit", 4)) == 0) {
-            printf("Client Exit...\n");
+    strncpy(message.messageType, "HELO", sizeof(char) * 4);
+    
+    int messageLength = atoi(message.messageLength);
+
+    message.messageBody = malloc((bodyLength + 1) * sizeof(char));
+
+    strncpy(message.messageBody, result, bodyLength);
+
+    return message;
+};
+
+int main(int argc, char *argv[]) {
+    int client_socket, port;
+    struct sockaddr_in server_addr;
+    char buffer[BUFFER_SIZE];
+
+    char client_id[10];
+
+    if (argc != 3) {
+        printf("Usage: %s <server IP> <port>\n", argv[0]);
+        return 1;
+    }
+
+    port = atoi(argv[2]);
+
+    // Create client socket
+    if ((client_socket = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+        printf("Error: Failed to create socket\n");
+        return 1;
+    }
+
+    // Set server address and port
+    memset(&server_addr, 0, sizeof(server_addr));
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_port = htons(port);
+
+    if (inet_pton(AF_INET, argv[1], &(server_addr.sin_addr)) <= 0) {
+        printf("Error: Invalid server IP address\n");
+        return 1;
+    }
+
+    // Connect to the server
+    if (connect(client_socket, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0) {
+        printf("Error: Failed to connect to the server\n");
+        return 1;
+    }
+
+    // Receive identifier from the server
+    memset(buffer, 0, BUFFER_SIZE);
+
+    if (recv(client_socket, buffer, BUFFER_SIZE, 0) <= 0) {
+        printf("Error: Failed to receive identifier from the server\n");
+        close(client_socket);
+        return 1;
+    }
+
+    printf("Connected to the server. %s", buffer);
+
+    while (1) {
+        printf("Enter 'q' to quit : \n");
+        printf("Enter 'a' to connect to the chat application : \n");
+        
+        fgets(buffer, BUFFER_SIZE, stdin);
+
+        // Remove trailing newline character
+        buffer[strcspn(buffer, "\n")] = '\0';
+
+        if(strcmp(buffer, "a") == 0 ) {
+            TchatcheMessage tchatch_connection_message = get_connection_request_message();
+            
+            char* message = concatenate_message(&tchatch_connection_message);
+           
+            memset(buffer, 0, BUFFER_SIZE);
+
+            strncpy(buffer, message,  strlen(message));
+
+            if(send(client_socket, buffer, strlen(message), 0) != strlen(buffer)) {
+                printf("Error: Failed to send connection message to the server\n");
+            }
+
+            memset(buffer, 0, BUFFER_SIZE);
+            
+            if(recv(client_socket, buffer, BUFFER_SIZE, 0) <= 0) {
+                printf("Error: Failed to receive connection response from the server\n");
+            }
+
+            printf("Server response: %s\n", buffer);
+            TchatcheMessage responseMessage = translate_buffer_to_message(buffer);
+
+            if(strncmp(responseMessage.messageType, ok,4) == 0) {
+                strncpy(client_id, responseMessage.messageBody, sizeof(char)*10);  
+                printf("Your identifier is %s\n", client_id);
+
+                free(responseMessage.messageBody);
+
+                while(1) {
+                    memset(buffer, 0,BUFFER_SIZE);
+                    printf("You are connected through the communication channel \n");
+                    printf("\n");
+                    printf("Enter 'q' to disconnect from the channel\n");
+
+
+                    fgets(buffer, BUFFER_SIZE, stdin);
+                
+                    size_t inputLength = strlen(buffer);
+
+                    if (inputLength > 0 && buffer[inputLength - 1] == '\n') {
+                        buffer[inputLength - 1] = '\0';
+                    }
+
+                    if(strcmp(buffer, "q") == 0) {
+
+                        size_t length = 4 + 4+sizeof(client_id);
+
+                        snprintf(buffer, sizeof(length), "%04lu", length);
+                        strncpy(buffer + 4, bye, sizeof(char)*4);
+                        strncpy(buffer+8, client_id,sizeof(char)*10);
+
+
+                        if(send(client_socket, buffer, length, 0) != length) {
+                            printf("Error: Failed to send disconnection message to the server\n");
+                        }
+                    }
+
+                    memset(buffer, 0, BUFFER_SIZE);
+
+                    if(recv(client_socket, buffer,BUFFER_SIZE, 0)<= 0) {
+                        printf("Error: Failed to receive server response\n");
+                    }
+
+                    char *messageType;
+
+                    strncpy(messageType, buffer + 4, sizeof(char)*4);
+
+                    if(strcmp(messageType, pubm) == 0 ) {
+                        printf("Server send the message publicly");
+                    }
+
+                    if(strcmp(messageType, bye)) {
+                        break;
+                    }
+                }
+            }
+        }
+
+        // Quit if 'q' is entered
+        if (strcmp(buffer, "q") == 0) {
             break;
         }
     }
+
+    // Close the client socket
+    close(client_socket);
+    return 0;
 }
 
-int main() 
-{ 
-    int choice;
-    
-    int id= 0;
-    
-    // choice = client_main_menu();
-    // // client logic identification
-    // printf("you choosed %d" , choice);
-     
-    client client = client_server_connect(id);
-    id++;
-    printf("%d" , client.id);
-    // printf("%s" , client.serveraddr.sin_addr);
-    
 
-    // //client socket response and connection response
-    // int sockfd; 
-    // struct sockaddr_in serveraddr; 
-  
-    // // socket create and varification 
-    // sockfd = socket(AF_INET, SOCK_STREAM, 0); 
-    // if (sockfd == -1) {  
-    //     printf("socket creation failed...\n"); 
-    //     exit(0); 
-    // } 
-    // else
-    //     printf("Socket successfully created.. \n"); 
-        
-    // bzero(&serveraddr, sizeof(serveraddr)); 
-  
-    // // assign IP, PORT 
-    // serveraddr.sin_family = AF_INET; 
-    // serveraddr.sin_addr.s_addr = inet_addr("127.0.0.1"); 
-    // serveraddr.sin_port = htons(PORT); 
-  
-    // // connect the client socket to server socket 
-    // if (connect(sockfd, (SA*)&serveraddr, sizeof(serveraddr)) != 0) { 
-    //     printf("connection with the server failed...\n"); 
-    //     exit(0); 
-    // } 
-    // else
-    //     printf("connected to the server..\n"); 
-    
-    // function for chat 
-    client_main_menu(client);
-    
-    // // close the socket 
-    // close(sockfd); 
-
-    //start application menu 
-} 

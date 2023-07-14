@@ -1,0 +1,12 @@
+DESCRIPTION : 
+
+- Tchatche is a client server application, the server connects multiple user connection and handle all connected client request. 
+
+- The communication between client and server is based on TCP ( connection full communication ), once the TCP connection is set, the user can exchange messages with the server ( other client using a protocol defined in the exercise)
+
+TODOS : 
+
+- Set the socket and connect the server to it. ( done )      
+- Receive client connection request. ( done )
+- Assign ID to the client and return connection response. ( done ) 
+- Receive client disconnection request (done ) 
