@@ -7,12 +7,12 @@ Multi user interactive system of communication. the application is inspired from
 ### Server
 
 As a TCP server, this component sets a socket and listen to new client socket connection. the server uses a multi-clients approach, each user connection is handled separately in an execution thread.
-Using a specific **Protocole** the server reads and responses according to client request 
+Using a specific **Protocol** the server reads and responses according to client request 
 
 ### Client
 
 As a TCP client, this component sets a socket and connects to the server, After successfully connecting, the client ping pong with the server by sending request and receiving server response.
-Using a specific **Protocole** the client reads and responses according to client request  
+Using a specific **Protocol** the client reads and responses according to client request  
 
 ## Application layer protocol
 

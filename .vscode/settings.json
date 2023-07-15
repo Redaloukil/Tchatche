@@ -11,5 +11,6 @@
     "cSpell.words": [
         "helo",
         "Tchatche"
-    ]
+    ],
+    "C_Cpp.errorSquiggles": "disabled"
 }

@@ -5,6 +5,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include "../proto/protocole.h"
+#include "../proto/message-type.h"
 #include "../proto/utils.h"
 #include "utils.h"
 
@@ -16,12 +17,10 @@ TchatcheMessage get_connection_request_message() {
     printf("Choose a username : \n");
     char* username = get_user_input();
 
-    printf("Choose a channel name to connect to : \n");
-    char* tunnel = get_user_input();
-    char* result = (char*)malloc((strlen(username) + strlen(tunnel) + 1) * sizeof(char));
+
+    char* result = (char*)malloc((strlen(username) + 1) * sizeof(char));
 
     strcpy(result, username);
-    strcat(result, tunnel);
 
 
     size_t bodyLength = strlen(result);
@@ -86,8 +85,6 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    printf("Connected to the server. %s", buffer);
-
     while (1) {
         printf("Enter 'q' to quit : \n");
         printf("Enter 'a' to connect to the chat application : \n");
@@ -115,7 +112,7 @@ int main(int argc, char *argv[]) {
             if(recv(client_socket, buffer, BUFFER_SIZE, 0) <= 0) {
                 printf("Error: Failed to receive connection response from the server\n");
             }
-
+            
             printf("Server response: %s\n", buffer);
             TchatcheMessage responseMessage = translate_buffer_to_message(buffer);
 
@@ -152,6 +149,7 @@ int main(int argc, char *argv[]) {
                         if(send(client_socket, buffer, length, 0) != length) {
                             printf("Error: Failed to send disconnection message to the server\n");
                         }
+                        break;
                     }
 
                     memset(buffer, 0, BUFFER_SIZE);

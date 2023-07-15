@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <pthread.h>
 #include "../proto/protocole.h"
+#include "../proto/message-type.h"
 
 
 #define MAX_CLIENTS 10
@@ -17,14 +18,15 @@ struct client_info {
 };
 
 int num_clients = 0;
-struct client_info clients[MAX_CLIENTS];
 
+struct client_info clients[MAX_CLIENTS];
 pthread_mutex_t clients_mutex = PTHREAD_MUTEX_INITIALIZER;
 
+
 void send_to_all_clients(char *message) {
-    int i;
+
     pthread_mutex_lock(&clients_mutex);
-    for (i = 0; i < num_clients; i++) {
+    for (int i = 0; i < num_clients; i++) {
         if (send(clients[i].socket, message, strlen(message), 0) != strlen(message)) {
             printf("Error: Failed to send message to client %s\n", clients[i].identifier);
         }
@@ -37,7 +39,7 @@ void send_to_private_client(char* identifier, char* message) {
     for(int i=0; i<num_clients;i++) {
         if(strcmp(clients[i].identifier, identifier) == 0) {
             if(send(clients[i].socket, message, strlen(message),0 ) != strlen(message)) {
-                printf("Error: Failed to send private message to client %s with username %s\n", clients[i].identifier);
+                printf("Error: Failed to send private message to client %s\n", clients[i].identifier);
             }
         }
     }
@@ -91,7 +93,7 @@ void handle_client(void *arg) {
             pthread_exit(NULL);
         }
 
-        printf("Received message from client %s: %s\n", client_identifier, buffer);
+        printf("Received message from client %s\n", buffer);
 
         TchatcheMessage receivedMessage;
 
@@ -103,14 +105,15 @@ void handle_client(void *arg) {
         receivedMessage.messageBody = malloc((bodyLength + 1) * sizeof(char));
         strncpy(receivedMessage.messageBody, buffer + 8, bodyLength);
 
-      
-
         if(strncmp(receivedMessage.messageType, helo, 4)== 0) {
             // Set client identification and return it to the client
 
+            sprintf(client_identifier, "%d", num_clients+1);
+
+            snprintf(client_identifier, sizeof(client_identifier), "%d", num_clients+1);
             // Generate identifier for client
             pthread_mutex_lock(&clients_mutex);
-            sprintf(client_identifier, "%d", num_clients+1);
+            
 
             // Store client information
             clients[num_clients].socket = client_socket;
